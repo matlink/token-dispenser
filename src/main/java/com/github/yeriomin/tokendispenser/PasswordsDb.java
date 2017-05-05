@@ -1,11 +1,19 @@
 package com.github.yeriomin.tokendispenser;
 
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.Arrays;
 
 class PasswordsDb {
 
@@ -21,18 +29,12 @@ class PasswordsDb {
         String password = config.getProperty(Server.PROPERTY_MONGODB_PASSWORD, "");
         String databaseNameStorage = config.getProperty(Server.PROPERTY_MONGODB_DB, "");
         String collectionName = config.getProperty(Server.PROPERTY_MONGODB_COLLECTION, "");
-        Mongo mongo;
-        try {
-            mongo = new Mongo(host, port);
-        } catch (UnknownHostException e) {
-            System.out.println("UnknownHostException: " + e.getMessage());
-            return;
-        }
-        DB mongoDb = mongo.getDB(databaseNameStorage);
-        if (!mongoDb.authenticate(username, password.toCharArray())) {
-            System.out.println("Failed to authenticate against db: " + databaseNameStorage);
-            return;
-        }
+
+	MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(username, databaseNameStorage,
+                password.toCharArray());
+	MongoClient mongo = new MongoClient(new ServerAddress(host, port), Arrays.asList(mongoCredential));
+
+	DB mongoDb = mongo.getDB(databaseNameStorage);
         collection = mongoDb.getCollection(collectionName);
     }
 
