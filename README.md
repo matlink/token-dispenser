@@ -7,7 +7,7 @@ Deploy a mongodb server (https://docs.mongodb.com/manual/tutorial/install-mongod
 - `mongo`
 - `use tokendispenser`
 - `db.passwords.insertOne( { "email": "gplaycliacc@gmail.com", "password": "abcdefgh" } )`
-- `db.createUser( { user: "tokenuser", "pwd": "tokenpwd", roles: [ { role: "read", db: "tokendispenser" } ] } )
+- `db.createUser( { user: "tokenuser", "pwd": "tokenpwd", roles: [ { role: "read", db: "tokendispenser" } ] } )`
 
 Deploy tokendispenser server
 ----------------------------
