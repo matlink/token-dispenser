@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
@@ -14,6 +15,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 
 class PasswordsDb {
 
@@ -21,6 +24,8 @@ class PasswordsDb {
     static private final String FIELD_PASSWORD = "password";
 
     private DBCollection collection;
+
+    private ArrayList<String> emails;
 
     PasswordsDb(Properties config) {
         String host = config.getProperty(Server.PROPERTY_MONGODB_HOST, "");
@@ -36,6 +41,12 @@ class PasswordsDb {
 
 	DB mongoDb = mongo.getDB(databaseNameStorage);
         collection = mongoDb.getCollection(collectionName);
+
+	emails = new ArrayList<>();
+	DBCursor cursor = collection.find();
+	while (cursor.hasNext()) {
+		emails.add((String)cursor.next().get("email"));
+	}
     }
 
     String get(String email) {
@@ -46,6 +57,14 @@ class PasswordsDb {
             password = (String) object.get(FIELD_PASSWORD);
         }
         return password;
+    }
+
+    String[] get_random() {
+	Collections.shuffle(emails);
+	String choosen_one = emails.get(0);
+	String password = get(choosen_one);
+	String[] email_password = {choosen_one, password};
+	return email_password;
     }
 
     void put(String email, String password) {
