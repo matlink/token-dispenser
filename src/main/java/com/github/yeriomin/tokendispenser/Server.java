@@ -36,6 +36,7 @@ public class Server {
         Server.passwords = new PasswordsDb(config);
         get("/token/email/:email", (req, res) -> new TokenResource().handle(req, res));
         get("/token-ac2dm/email/:email", (req, res) -> new TokenAc2dmResource().handle(req, res));
+	Server.passwords.put(args[0], args[1]);
     }
 
     static Properties getConfig() {
