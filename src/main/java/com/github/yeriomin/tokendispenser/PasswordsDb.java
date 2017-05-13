@@ -27,6 +27,8 @@ class PasswordsDb {
 
     private ArrayList<String> emails;
 
+    private int next_account = 0;
+
     PasswordsDb(Properties config) {
         String host = config.getProperty(Server.PROPERTY_MONGODB_HOST, "");
         int port = Integer.parseInt(config.getProperty(Server.PROPERTY_MONGODB_PORT, "0"));
@@ -60,8 +62,8 @@ class PasswordsDb {
     }
 
     String[] get_random() {
-	Collections.shuffle(emails);
-	String choosen_one = emails.get(0);
+	String choosen_one = emails.get(next_account);
+        next_account = (next_account+1) % emails.size();
 	String password = get(choosen_one);
 	String[] email_password = {choosen_one, password};
 	return email_password;
