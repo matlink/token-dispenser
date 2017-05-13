@@ -1,9 +1,18 @@
 language: java
 sudo: required
 jdk:
-  - openjdk8
+- openjdk8
 services:
-  - mongodb
+- mongodb
 dist: trusty
 before_install:
-  - "mongo --eval \"db.createUser( { user: 'tokenuser', 'pwd': 'tokenpwd', roles: [ { role: 'read', db: 'tokendispenser' } ] } )\""
+- 'mongo --eval "db.createUser( { user: ''tokenuser'', ''pwd'': ''tokenpwd'', roles:
+  [ { role: ''read'', db: ''tokendispenser'' } ] } )"'
+script:
+- java -jar target/token-dispenser-*.jar $GMAIL_LOGIN $GMAIL_PASS
+- java -jar target/token-dispenser-*.jar &
+- curl "http://localhost:8080/token/email/$GMAIL_LOGIN"
+env:
+  global:
+  - secure: npnzjn/2Du7Bg0kJJJ/H8SMmUVAfSYVDwvUYeQ/ATGVuFNfBDURQ2RFIoBhno/zBYkIrsyYQdnW77O55uBE7thqGpMWsEXQY+mLu8YI6VOyydkb/Hy5uJ6MHkoXDF53FR0mPBVJo2QlatU+TBOrXyLJO0MxRKFqF2uOyYF+gfVshO4uTEPsb8s63V8/dTM9nyJ2D1WujHbQYGT9Dv0cr0KQI+lmpMD/2ck2Yofn0mns489xqrTD0fNqEfqMjnqsswv/hQyP3wfpJYbHyJToMYlPX7lzHOcmsuOmJI6FINpP6U19lk2h015Hnw4Xp+HFy/H7gosbE9X5h8RTxwt3jInm83jbDGZGvCC57cL7RYJ901fWA3HMgA8cPShwla7JoiF1TCXvxcpPpuKJxtbTNaTeLXMlsTRJef3snu9snnVvqHW323XBqi7M7LWWudYN+R3Jb605nZlap8FX/h3Bxb4A+oJaRVyvjUZASJz0NjbuL7bVjEvUsYSHxSYE2DLNV8/W34MY6Q9c5oLN/kooqsVZ/rYw+fVJL9scNOZvEZHlcc2yhDHCg1DVH6gwWh6lEvxgNmWdDXYQmnfo+zrBCaht4r0MFUJNTdxOXz3JPYz+P2conBfJts77qOJUzMKp3Qa9nz6VKrT7rCvpyfRq1GzpXuKGtTiSO62IcJgqvaB4=
+  - secure: Qil+CIpE9ork5kmtfvjdH6ic583E9fdxCcgCsSTFyqC9CIWy5P04lFWUeoP9AvS9B0KvrpkUi72yqaRhJ1AGCjNz1hCumnMI6ScYKTL4mCoDbN5a/i7zRk5Cj0maNH5imF4d1Jw2tV/1rskSkHC99AABFL+F5sKzRkJc2pTAA4/0YCjNpdHBItWmuauYoXHlCWKGkvFTm2bb6BigJWPLc4CPbSmMnUhffg6KkFtd8H0tBcyBaHaNCmzRBBd2APdBg7aFKWfV8bXWI3BYSYZKN8vR1FQqobgg07+ZzsNeNWoYvIRadUvrYGUB7yvsJmfncv1nWlfB90nhEDYK3abSsdjenrpHN5UozMDi00iq+C/1YczeKjMLGEPe6B3xtRz71e2Ptl+D5Qc0hNTN0CHUYo6d+Phe4DlXsdtQqB+3NilnWB5S7br/f8FYmag2wMkWHjLSQstVqKCkPp9TWS8LJV7etlPgPUJGB+FgctIPtjOlVUS5O7BvE+ihhG75JfwkaYCChUq2eBaaI1SZ+P4R/5xHqz+HMaqOQwFCRC6n1azYZiiDuP5HP5n7tAWRiYAWaW4JJXLAukgS1OoBqtgqXZFdql1WVsfHf17zGD67ROK+B5aVWHTx6fSdw0twhMfPJzP6WztTUR0Fh03iyEaxdOoGcA/EgZpC1X2AaHo6KY0=
