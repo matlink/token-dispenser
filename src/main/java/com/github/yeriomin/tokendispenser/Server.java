@@ -23,6 +23,12 @@ public class Server {
 
     public static void main(String[] args) {
         Properties config = getConfig();
+        Server.passwords = new PasswordsDb(config);
+        // if we want to add an google account
+        if (args.length == 2) {
+	        Server.passwords.put(args[0], args[1]);
+                System.exit(0);
+        }
         String host = config.getProperty(PROPERTY_SPARK_HOST, "0.0.0.0");
         int port = Integer.parseInt(config.getProperty(PROPERTY_SPARK_PORT, "8080"));
         String hostDiy = System.getenv("OPENSHIFT_DIY_IP");
@@ -33,14 +39,9 @@ public class Server {
         ipAddress(host);
         port(port);
         after((request, response) -> response.type("text/plain"));
-        Server.passwords = new PasswordsDb(config);
         get("/token/email/:email", (req, res) -> new TokenResource().handle(req, res));
         get("/token-ac2dm/email/:email", (req, res) -> new TokenAc2dmResource().handle(req, res));
         
-        // if we want to add an google account
-        if (args.length == 2) {
-	        Server.passwords.put(args[0], args[1]);
-        }
     }
 
     static Properties getConfig() {
