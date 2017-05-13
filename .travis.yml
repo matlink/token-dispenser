@@ -12,8 +12,8 @@ before_install:
 - sudo apt install -y mongodb-org=3.4.4
 - sleep 15
 - mongo --version
-- 'mongo tokendispenser --eval 'db.addUser("tokenuser", "tokenpwd")'
-- 'mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
+- mongo tokendispenser --eval 'db.addUser("tokenuser", "tokenpwd")'
+- mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
 script:
 - java -jar target/token-dispenser-*.jar $GMAIL_LOGIN $GMAIL_PASS
 - java -jar target/token-dispenser-*.jar &
