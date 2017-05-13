@@ -6,4 +6,4 @@ services:
   - mongodb
 dist: trusty
 before_install:
-  - mongo --eval "db.createUser( { user: 'tokenuser', 'pwd': 'tokenpwd', roles: [ { role: 'read', db: 'tokendispenser' } ] } )"
+  - "mongo --eval \"db.createUser( { user: 'tokenuser', 'pwd': 'tokenpwd', roles: [ { role: 'read', db: 'tokendispenser' } ] } )\""
