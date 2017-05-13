@@ -13,9 +13,10 @@ before_install:
 - mongo tokendispenser --eval 'db.createUser({user:"tokenuser",pwd:"tokenpwd",roles:[{role:"read",db:"tokendispenser"}]})'
 #- mongo tokendispenser --eval 'db.addUser("tokenuser", "tokenpwd")'
 - mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
+before_script:
+- java -jar target/token-dispenser-*.jar &
 script:
 - java -jar target/token-dispenser-*.jar $GMAIL_LOGIN $GMAIL_PASS
-- java -jar target/token-dispenser-*.jar &
 - curl "http://localhost:8080/token/email/$GMAIL_LOGIN"
 env:
   global:
