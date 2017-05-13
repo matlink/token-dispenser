@@ -1,7 +1,9 @@
 language: java
-services: mongodb
+services: 
+- mongodb
 sudo: required
-jdk: openjdk8
+jdk: 
+- openjdk8
 dist: trusty
 before_install:
 - sudo apt-key adv --keyserver "hkp://keyserver.ubuntu.com:80" --recv 0C49F3730359A14518585931BC711F9BA15703C6
