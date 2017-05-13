@@ -13,6 +13,7 @@ before_install:
 - mongo tokendispenser --eval 'db.createUser({user:"tokenuser",pwd:"tokenpwd",roles:[{role:"readWrite",db:"tokendispenser"}]})'
 - mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
 before_script:
+- mvn package
 - java -jar target/token-dispenser-*.jar > token-log.log 2>token-error.log & 
 script:
 - sleep 10
