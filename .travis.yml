@@ -13,7 +13,7 @@ before_install:
 - mongo tokendispenser --eval 'db.createUser({user:"tokenuser",pwd:"tokenpwd",roles:[{role:"read",db:"tokendispenser"}]})'
 - mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
 before_script:
-- java -jar target/token-dispenser-*.jar &
+- java -jar target/token-dispenser-*.jar
 - netstat -plnt
 script:
 - netstat -plnt
