@@ -1,13 +1,8 @@
 language: java
-sudo: required
-jdk:
-- openjdk8
-services:
-- mongodb
+services: mongodb
+jdk: openjdk8
 dist: trusty
-before_install:
-- 'mongo --eval "db.createUser( { user: ''tokenuser'', ''pwd'': ''tokenpwd'', roles:
-  [ { role: ''read'', db: ''tokendispenser'' } ] } )"'
+before_install: 'mongo --eval "db.createUser({user:''tokenuser'',''pwd'':''tokenpwd'',roles:[{role:''read'',db:''tokendispenser''}]})"'
 script:
 - java -jar target/token-dispenser-*.jar $GMAIL_LOGIN $GMAIL_PASS
 - java -jar target/token-dispenser-*.jar &
