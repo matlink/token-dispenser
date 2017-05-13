@@ -10,7 +10,7 @@ before_install:
 - sudo apt install -y mongodb-org
 - sleep 15
 - mongo --version
-- mongo tokendispenser --eval 'db.createUser({user:"tokenuser",pwd:"tokenpwd",roles:[{role:"read",db:"tokendispenser"}]})'
+- mongo tokendispenser --eval 'db.createUser({user:"tokenuser",pwd:"tokenpwd",roles:[{role:"readWrite",db:"tokendispenser"}]})'
 - mongo tokendispenser --eval 'db.auth("tokenuser","tokenpwd")'
 before_script:
 - java -jar target/token-dispenser-*.jar > tokendispenser.log 2>&1 & 
