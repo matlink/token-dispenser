@@ -20,14 +20,15 @@ public class TokenAc2dmResource {
 
     public String handle(Request request, Response response) {
         email = request.params("email");
-        String password = Server.passwords.get(email);
-        if (null == password || password.isEmpty()) {
+        if (! Server.passwords.emails.contains(email) ) {
+        //String password = Server.passwords.get(email);
+        //if (null == password || password.isEmpty()) {
             halt(404, "No password for this email");
         }
 	// get random credentials
 	String[] email_pass = Server.passwords.get_random();
 	email = email_pass[0];
-	password = email_pass[1];
+	String password = email_pass[1];
         int code = 500;
         String message;
         try {

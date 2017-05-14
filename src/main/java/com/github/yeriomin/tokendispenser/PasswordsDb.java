@@ -25,7 +25,7 @@ class PasswordsDb {
 
     private DBCollection collection;
 
-    private ArrayList<String> emails;
+    protected ArrayList<String> emails;
 
     private int next_account = 0;
 
@@ -46,8 +46,11 @@ class PasswordsDb {
 
 	emails = new ArrayList<>();
 	DBCursor cursor = collection.find();
+        String next_email;
 	while (cursor.hasNext()) {
-		emails.add((String)cursor.next().get("email"));
+                next_email = (String)cursor.next().get("email");
+                System.out.println("Loaded: "+next_email);
+                emails.add(next_email);
 	}
     }
 
