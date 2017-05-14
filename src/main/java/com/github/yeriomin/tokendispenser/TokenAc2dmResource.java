@@ -25,23 +25,31 @@ public class TokenAc2dmResource {
         //if (null == password || password.isEmpty()) {
             halt(404, "No password for this email");
         }
-	// get random credentials
-	String[] email_pass = Server.passwords.get_random();
-	email = email_pass[0];
-	String password = email_pass[1];
-        int code = 500;
-        String message;
-        try {
-            return getToken(password);
-        } catch (GooglePlayException e) {
-            if (e.getCode() >= 400) {
-                code = e.getCode();
-            }
-            message = e.getMessage();
-            halt(code, message);
-        } catch (IOException e) {
-            message = e.getMessage();
-            halt(code, message);
+        String token = null;
+        int attempts = 5;
+        while (token == null && attempts != 0) {
+                attempts--;
+	        // get next credentials
+	        String[] email_pass = Server.passwords.get_next();
+	        email = email_pass[0];
+	        String password = email_pass[1];
+                System.out.println("Choosen: "+email);
+                int code = 500;
+                String message;
+                try {
+                    token = getToken(password);
+                    return token;
+                } catch (GooglePlayException e) {
+                    if (e.getCode() >= 400) {
+                        code = e.getCode();
+                    }
+                    message = e.getMessage();
+                    System.out.println("Error: "+message);
+                    // halt(code, message);
+                } catch (IOException e) {
+                    message = e.getMessage();
+                    halt(code, message);
+                }
         }
         return "";
     }

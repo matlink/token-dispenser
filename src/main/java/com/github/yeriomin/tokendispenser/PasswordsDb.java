@@ -64,7 +64,7 @@ class PasswordsDb {
         return password;
     }
 
-    String[] get_random() {
+    String[] get_next() {
 	String choosen_one = emails.get(next_account);
         next_account = (next_account+1) % emails.size();
 	String password = get(choosen_one);
