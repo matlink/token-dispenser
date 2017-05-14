@@ -25,7 +25,9 @@ class PasswordsDb {
 
     private DBCollection collection;
 
-    private ArrayList<String> emails;
+    protected ArrayList<String> emails;
+
+    private int next_account = 0;
 
     PasswordsDb(Properties config) {
         String host = config.getProperty(Server.PROPERTY_MONGODB_HOST, "");
@@ -44,8 +46,11 @@ class PasswordsDb {
 
 	emails = new ArrayList<>();
 	DBCursor cursor = collection.find();
+        String next_email;
 	while (cursor.hasNext()) {
-		emails.add((String)cursor.next().get("email"));
+                next_email = (String)cursor.next().get("email");
+                System.out.println("Loaded: "+next_email);
+                emails.add(next_email);
 	}
     }
 
@@ -59,9 +64,9 @@ class PasswordsDb {
         return password;
     }
 
-    String[] get_random() {
-	Collections.shuffle(emails);
-	String choosen_one = emails.get(0);
+    String[] get_next() {
+	String choosen_one = emails.get(next_account);
+        next_account = (next_account+1) % emails.size();
 	String password = get(choosen_one);
 	String[] email_password = {choosen_one, password};
 	return email_password;
