@@ -11,12 +11,14 @@ import spark.Route;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
+import java.lang.Thread;
 
 import static spark.Spark.halt;
 
 public class TokenAc2dmResource {
 
     private String email;
+    private final int sleep_beetween_tries = 1000;
 
     public String handle(Request request, Response response) {
         email = request.params("email");
@@ -26,7 +28,7 @@ public class TokenAc2dmResource {
             halt(404, "No password for this email");
         }
         String token = null;
-        int attempts = 5;
+        int attempts = 10;
         while (token == null && attempts != 0) {
                 attempts--;
 	        // get next credentials
@@ -44,7 +46,9 @@ public class TokenAc2dmResource {
                         code = e.getCode();
                     }
                     message = e.getMessage();
-                    System.out.println("Error: "+message);
+                    System.out.println("Error: "+message+" "+attempts+" remaining");
+		    try{ Thread.sleep(sleep_beetween_tries); }
+		    catch(java.lang.InterruptedException ie){ System.err.println("Thread interrupted while sleeping"); }
                     // halt(code, message);
                 } catch (IOException e) {
                     message = e.getMessage();
