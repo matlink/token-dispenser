@@ -1,3 +1,4 @@
+# This fork is deprecated. Please use the original one, which provide a simple way to deploy it without running a mongodb server.
 # token-dispenser
 Stores email-password pairs, gives out Google Play Store tokens
 
