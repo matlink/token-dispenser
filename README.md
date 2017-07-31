@@ -1,27 +1,40 @@
 # This fork is deprecated. Please use the original one, which provide a simple way to deploy it without running a mongodb server.
 # token-dispenser
-Stores email-password pairs, gives out Google Play Store tokens
+Stores email-password pairs, gives out Google Play Store tokens.
 
-# Installation (debian jessie)
-Deploy a mongodb server (https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/)
------------------------
-- `apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6`
-- `echo"deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" > /etc/apt/sources.list.d/mongodb-org-3.4.list`
-- `apt update`
-- `apt install mongodb-org`
-- `mongo`
-- `use tokendispenser`
-- `db.passwords.insertOne( { "email": "gplaycliacc@gmail.com", "password": "abcdefgh" } )`
-- `db.createUser( { user: "tokenuser", "pwd": "tokenpwd", roles: [ { role: "read", db: "tokendispenser" } ] } )`
+Using Google Play Store API requires logging in using email and password. If you have a project which works with Google Play Store API you no longer have to make the users use their live accounts or ship your software with your account credentials inside. You can deploy a token dispenser instance and it will provide auth tokens on demand without letting the world know your password.
 
-Deploy tokendispenser server
-----------------------------
-- Add `deb http://ftp.de.debian.org/debian jessie-backports main` to `/etc/apt/sources.list`
-- `apt update`
-- `apt -t jessie-backports install openjdk-8-jdk maven git`
-- `git clone https://github.com/matlink/token-dispenser`
-- `cd token-dispenser`
-- Edit `src/main/resources/config.properties` to match your environment (what you setted in Mongodb, IP is probably 127.0.0.1)
-- `mvn package`
-- `update-java-alternatives -s java-1.8.0-openjdk-amd64`
-- `java -jar target/token-dispenser-0.1.jar`
+### Building
+
+1. `git clone https://github.com/yeriomin/token-dispenser`
+2. `cd token-dispenser`
+3. Edit `src/main/resources/config.properties`
+4. `mvn install`
+5. `java -jar target/token-dispenser.jar`
+
+### Configuration
+
+[config.properties](/src/main/resources/config.properties) holds token dispenser's configuration.
+
+Two things are configurable:
+* web server
+* storage
+
+#### Web server
+
+Token dispenser uses [spark framework](http://sparkjava.com/). To configure network address and port on which spark should listen change `spark-host` and `spark-port`.
+
+#### Storage
+
+There are two storage options supported:
+* **Plain text** Set `storage` to `plaintext` to use it. `storage-plaintext-path` property is used to store filesystem path to a plain text file with email-password pairs. There is an example [here](/passwords.txt). Securing it is up to you.
+* **MongoDB** Set `storage` to `mongodb` to use it. Configurable parameters are self-explanatory.
+
+### Usage
+Once server is configured, you can get the tokens for **regular requests** at http://server-address:port/token/email/youremail@gmail.com
+and tokens for **checkin requests** at http://server-address:port/token-ac2dm/email/youremail@gmail.com
+
+### Credits
+
+* [play-store-api](https://github.com/yeriomin/play-store-api)
+* [spark](http://sparkjava.com/)
