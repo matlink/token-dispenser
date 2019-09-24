@@ -35,9 +35,8 @@ public class Server {
     static public final String STORAGE_MONGODB = "mongodb";
     static public final String STORAGE_PLAINTEXT = "plaintext";
     static public final String STORAGE_ENV = "env";
-    
-    static public final String ENV_EMAIL = "TOKEN_EMAIL";
-    static public final String ENV_PASSWORD = "TOKEN_PASSWORD";
+
+    static public final String ENV_TOKEN_CREDENTIALS = "TOKEN_CREDENTIALS";
     
     static PasswordsDbInterface passwords;
 
