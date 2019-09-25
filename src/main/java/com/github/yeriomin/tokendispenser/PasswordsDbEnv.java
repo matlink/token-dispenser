@@ -9,14 +9,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
-class Password {
-  public String username, password;
-  Password(String u, String p) {
-    username = u;
-    password = p;
-  }
-}
-
 public class PasswordsDbEnv implements PasswordsDbInterface {
 
   static private final String FIELD_SEPARATOR = ":";
