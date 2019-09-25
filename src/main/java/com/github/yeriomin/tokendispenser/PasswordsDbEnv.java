@@ -1,5 +1,6 @@
 package com.github.yeriomin.tokendispenser;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,10 +27,14 @@ public class PasswordsDbEnv implements PasswordsDbInterface {
           Server.LOG.warn("Invalid user:pass pair in " + Server.ENV_TOKEN_CREDENTIALS);
           continue;
       }
-      String email = URLDecoder.decode(pair[0], StandardCharsets.UTF_8);
-      String password = URLDecoder.decode(pair[1], StandardCharsets.UTF_8);
-      passwords.put(email, password);
-      System.out.println(passwords);
+      try {
+        String email = URLDecoder.decode(pair[0], StandardCharsets.UTF_8.name());
+        String password = URLDecoder.decode(pair[1], StandardCharsets.UTF_8.name());
+        passwords.put(email, password);
+      } catch (UnsupportedEncodingException e) {
+        Server.LOG.error("UTF-8 is unsuppoorted.");
+        return;
+      }
     }
 
   }
