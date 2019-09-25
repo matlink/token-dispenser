@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 import static spark.Spark.after;
@@ -82,6 +83,10 @@ public class Server {
             properties.put(PROPERTY_MONGODB_USERNAME, System.getenv("OPENSHIFT_MONGODB_DB_USERNAME"));
             properties.put(PROPERTY_MONGODB_PASSWORD, System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD"));
             properties.put(PROPERTY_MONGODB_DB, System.getenv("OPENSHIFT_APP_NAME"));
+        }
+        String storage = System.getenv(PROPERTY_STORAGE.toUpperCase());
+        if (Arrays.asList(STORAGE_MONGODB, STORAGE_PLAINTEXT, STORAGE_ENV).contains(storage)) {
+            properties.put(PROPERTY_STORAGE, storage);
         }
         return properties;
     }
