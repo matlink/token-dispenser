@@ -32,7 +32,7 @@ public class PasswordsDbEnv implements PasswordsDbInterface {
         String password = URLDecoder.decode(pair[1], StandardCharsets.UTF_8.name());
         passwords.put(email, password);
       } catch (UnsupportedEncodingException e) {
-        Server.LOG.error("UTF-8 is unsuppoorted.");
+        Server.LOG.error("UTF-8 is unsupported.");
         return;
       }
     }
