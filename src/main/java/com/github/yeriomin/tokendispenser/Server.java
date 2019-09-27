@@ -1,10 +1,16 @@
 package com.github.yeriomin.tokendispenser;
 
+import com.qmetric.spark.authentication.AuthenticationDetails;
+import com.qmetric.spark.authentication.BasicAuthenticationFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -32,6 +38,7 @@ public class Server {
     static final String PROPERTY_MONGODB_DB = "mongodb-databaseNameStorage";
     static final String PROPERTY_MONGODB_COLLECTION = "mongodb-collectionName";
     static final String PROPERTY_EMAIL_RETRIEVAL = "enable-email-retrieval";
+    static final String PROPERTY_BASIC_AUTH = "basic-auth";
 
     static public final String STORAGE_MONGODB = "mongodb";
     static public final String STORAGE_PLAINTEXT = "plaintext";
@@ -59,6 +66,22 @@ public class Server {
             res.header("Access-Control-Request-Method", "GET");
         });
         after((req, res) -> res.type("text/plain"));
+        String basicAuth = config.getProperty(PROPERTY_BASIC_AUTH, "");
+        if (!basicAuth.equals("")) {
+            try {
+                String[] pair = basicAuth.split(":");
+                if (pair.length != 2) { 
+                    LOG.error(PROPERTY_BASIC_AUTH + " not in the format '<user>:<pass>'.");
+                    return;
+                }
+                String user = URLDecoder.decode(pair[0], StandardCharsets.UTF_8.name());
+                String pass = URLDecoder.decode(pair[1], StandardCharsets.UTF_8.name());
+                before(new BasicAuthenticationFilter("/", new AuthenticationDetails(user, pass)));
+            } catch (UnsupportedEncodingException e) {
+                Server.LOG.error("UTF-8 is unsupported.");
+                return;
+            }
+        }
         Server.passwords = PasswordsDbFactory.get(config);
         get("/token/email/:email", (req, res) -> new TokenResource().handle(req, res));
         get("/token-ac2dm/email/:email", (req, res) -> new TokenAc2dmResource().handle(req, res));
@@ -83,6 +106,10 @@ public class Server {
             properties.put(PROPERTY_MONGODB_USERNAME, System.getenv("OPENSHIFT_MONGODB_DB_USERNAME"));
             properties.put(PROPERTY_MONGODB_PASSWORD, System.getenv("OPENSHIFT_MONGODB_DB_PASSWORD"));
             properties.put(PROPERTY_MONGODB_DB, System.getenv("OPENSHIFT_APP_NAME"));
+        }
+        String basicAuth = System.getenv(PROPERTY_BASIC_AUTH.replace("-", "_").toUpperCase());
+        if (basicAuth != null) {
+            properties.put(PROPERTY_BASIC_AUTH, basicAuth);
         }
         String storage = System.getenv(PROPERTY_STORAGE.toUpperCase());
         if (Arrays.asList(STORAGE_MONGODB, STORAGE_PLAINTEXT, STORAGE_ENV).contains(storage)) {
