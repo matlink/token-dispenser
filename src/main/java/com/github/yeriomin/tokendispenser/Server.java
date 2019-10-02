@@ -1,8 +1,5 @@
 package com.github.yeriomin.tokendispenser;
 
-import com.qmetric.spark.authentication.AuthenticationDetails;
-import com.qmetric.spark.authentication.BasicAuthenticationFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,11 +9,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Properties;
 
 import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.get;
+import static spark.Spark.halt;
 import static spark.Spark.ipAddress;
 import static spark.Spark.notFound;
 import static spark.Spark.port;
@@ -76,13 +75,24 @@ public class Server {
                 }
                 String user = URLDecoder.decode(pair[0], StandardCharsets.UTF_8.name());
                 String pass = URLDecoder.decode(pair[1], StandardCharsets.UTF_8.name());
-                before(new BasicAuthenticationFilter("/", new AuthenticationDetails(user, pass)));
+                before((req, res) -> {
+                    if (req.pathInfo().equals("/health")) return;
+                    String header = req.headers("Authorization");
+                    if (header == null) halt(401, "Access denied.");
+                    String[] parts = header.split(" ");
+                    if (parts.length != 2) halt(400, "Malformed auth header.");
+                    if (!parts[0].equals("Basic")) halt(401, "Unsupported auth method.");
+                    String[] creds = new String(Base64.getDecoder().decode(parts[1])).split(":");
+                    if (creds.length != 2) halt(400, "Malformed auth header.");
+                    if (!creds[0].equals(user) || !creds[1].equals(pass)) halt(401, "Access denied.");
+                });
             } catch (UnsupportedEncodingException e) {
                 Server.LOG.error("UTF-8 is unsupported.");
                 return;
             }
         }
         Server.passwords = PasswordsDbFactory.get(config);
+        get("/health", (req, res) -> "");
         get("/token/email/:email", (req, res) -> new TokenResource().handle(req, res));
         get("/token-ac2dm/email/:email", (req, res) -> new TokenAc2dmResource().handle(req, res));
         if (config.getProperty(PROPERTY_EMAIL_RETRIEVAL, "false").equals("true")) {
