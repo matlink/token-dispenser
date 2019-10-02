@@ -30,6 +30,8 @@ Two things are configurable:
 
 Token dispenser uses [spark framework](http://sparkjava.com/). To configure network address and port on which spark should listen change `spark-host` and `spark-port`.
 
+Basic auth is also available. To enable, change `basic-auth` to `<user>:<pass>`.
+
 #### Storage
 
 There are three storage options supported:
@@ -47,3 +49,4 @@ gplaycli requires also the GSFid. Token and GSFid can be retrieved using http://
 
 * [play-store-api](https://github.com/yeriomin/play-store-api)
 * [spark](http://sparkjava.com/)
+
