@@ -5,7 +5,7 @@ RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y maven git nano
 
-RUN git clone https://github.com/matlink/token-dispenser.git /token-dispenser
+ADD . /token-dispenser
 
 RUN groupadd -g 666 dispenser && \
     useradd -m -g dispenser -u 666 -s /bin/bash dispenser && \
